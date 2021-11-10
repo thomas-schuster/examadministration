@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <script type="text/javascript">
+        PrimeFaces.locales['de'] = {
+            closeText: 'Schließen',
+            prevText: 'Zurück',
+            nextText: 'Weiter',
+            monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+            monthNamesShort: ['Jan', 'Feb', 'März', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+            dayNames: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+            dayNamesShort: ['Son', 'Mon', 'Die', 'Mit', 'Don', 'Fre', 'Sam'],
+            dayNamesMin: ['S', 'M', 'D', 'M ', 'D', 'F ', 'S'],
+            weekHeader: 'Woche',
+            FirstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Nur Zeit',
+            timeText: 'Zeit',
+            hourText: 'Stunde',
+            minuteText: 'Minute',
+            secondText: 'Sekunde',
+            currentText: 'Aktuelles Datum',
+            ampm: false,
+            month: 'Monat',
+            week: 'Woche',
+            day: 'Tag',
+            allDayText: 'Ganzer Tag'
+        };
+    </script>
+
+    <h:form id="frmCreateLearningAgreementItems">
+        <p:messages id="errorMessages"/>
+        <div class="p-grid">
+            <div class="p-col-12 p-md-12 p-lg-12">          
+                <p:outputLabel for="motivation" value="Personal Motivation:" /><br/>
+                <p:inputTextarea id="motivation" value="#{applicationBean.motivation}" rows="5" cols="150" counter="display" maxlength="1500" counterTemplate="{0} characters remaining." autoResize="true" />
+                <br/><h:outputText id="display" /><br />
+            </div>
+            
+            <div class="p-col-12 p-md-3 p-lg-2">   
+                <p:outputLabel for="languageLevel" value="Language Level:" />
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-4"> 
+                <p:selectOneMenu id="languageLevel" value="#{applicationBean.level}">
+                    <f:selectItems value="#{applicationBean.levels}" var="slevel" itemLabel="#{slevel.description}" itemValue="#{slevel.description}"/>
+                </p:selectOneMenu>
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-2">   
+                <p:outputLabel for="startDate" value="Start Date:" />
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-4"> 
+                <p:calendar id="startDate" value="#{applicationBean.startDate}" locale="de" navigator="true" required="true" pattern="dd. MMMM yyyy" />
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-2">   
+                <p:outputLabel for="endDate" value="End Date:" />
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-4"> 
+                <p:calendar id="endDate" value="#{applicationBean.endDate}" locale="de" navigator="true" required="true" pattern="dd. MMMM yyyy" />
+            </div>
+            <div class="p-col-12 p-md-3 p-lg-2">          
+                <p:outputLabel for="console" value="Host University:" />
+            </div>
+
+            <div class="p-col-12 p-md-9 p-lg-10">   
+                <p:selectOneMenu id="console" value="#{applicationBean.host}" converter="#{hostConverter}">
+                    <f:selectItems value="#{applicationBean.hosts}" itemLabel="#{shost.universityName}" var="shost"/>
+                </p:selectOneMenu>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-3">          
+                <p:commandButton value="Save" style="width: 120px" icon="fa fa-fw fa-save" update="@form" action="#{applicationBean.createApplication()}" oncomplete="if (!args.validationFailed) PF('itemsDialog').hide()" />
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-3">          
+                <p:commandButton value="Cancel" style="width: 120px" icon="fa fa-fw fa-remove" oncomplete="PF('itemsDialog').hide()"  />
+            </div>
+        </div>
+    </h:form>
+
+</ui:composition>

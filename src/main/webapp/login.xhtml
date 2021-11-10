@@ -1,39 +1,48 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"                
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
-                template="/default.xhtml">
+                template="./WEB-INF/templates/template.xhtml">
     <ui:define name="content">
-        <h:form id="loginForm">
-            <h:panelGrid  columns="2" headerClass="panelHeading">
-                <f:facet name="header">
-                    <h:outputText value="User Login " />
-                </f:facet>                
-                <h:outputLabel for="UserId" value="UserId/E-Mail"/>
-                <h:panelGroup>
-                    <h:inputText id="UserId" required="true"
-                                 value="#{loginBean.userData.userId}"
-                                 requiredMessage=" - Please enter userId"/>
-                    <h:message for="UserId" errorClass="error"/>
-                </h:panelGroup>
-                <h:outputLabel for="password" value="Password"/>
-                <h:panelGroup>
-                    <h:inputSecret id="password" required="true"
-                                   value="#{loginBean.userData.password}"
-                                   requiredMessage=" - Please enter password">
-                    </h:inputSecret>
-                    <h:message for="password" errorClass="error"/>
-                </h:panelGroup>
-            </h:panelGrid>
-            <h:panelGroup>
-                <h:commandButton value="Login" id="loginButton" title="Login to System" 
-                                 action="#{loginBean.doLogin()}"/>   
-                <h:message for="loginButton" errorClass="error"/>
-            </h:panelGroup>
-        </h:form>
+        <div class="standard-body">
+            <h2> User Login </h2>
+            <h:form id="loginForm">
+
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-6 p-lg-4">
+                        <div class="ui-inputgroup">
+                            <span class="ui-inputgroup-addon"><i class="pi pi-user"></i></span>
+                            <p:inputText id="UserId" required="true" 
+                                         value="#{loginBean.user.userId}" placeholder="username"
+                                         requiredMessage=" - Please enter userId"/>
+                        </div>
+                    </div>
+                    <div class="p-col-12 p-md-6 p-lg-8">
+                        <p:message for="UserId"/>
+                    </div>
+
+                    <div class="p-col-12 p-md-6 p-lg-4">
+                        <div class="ui-inputgroup">
+                            <span class="ui-inputgroup-addon"><i class="pi pi-key"></i></span>
+                            <p:password id="password" required="true"
+                                        value="#{loginBean.user.password}"
+                                        requiredMessage=" - Please enter password"/>
+                        </div>
+                    </div>
+                    <div class="p-col-12 p-md-6 p-lg-8">
+                        <p:message for="password"/>
+                    </div>
+                    <div class="p-col-12 p-md-6 p-lg-4">
+                        <p:commandButton value="Login" id="loginButton" title="Login to System" validateClient="true"
+                                         action="#{loginBean.doLogin}" update="@form"/>   
+                    </div>
+                </div>
+                <p:growl id="growl" showDetail="true" severity="warn"/> 
+            </h:form>
+        </div>
     </ui:define>   
 </ui:composition>
 

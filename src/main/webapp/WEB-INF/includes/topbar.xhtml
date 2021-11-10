@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <div class="topnav" id="examNavBar">
+        <h:form>
+            <h:commandLink action="login.xhtml" class="active">
+                <p:graphicImage value="resources/icons/location.png" width="18" height="18"/><span class="nav-text">Study Abroad</span>
+            </h:commandLink>
+            <h:commandLink rendered="#{loginBean.loggedIn}" action="#{applicationBean.navigate2ApprovedApplications(true)}">
+                <i class="pi pi-list"></i><span class="nav-text">Applications</span>
+            </h:commandLink>
+            <h:commandLink rendered="#{loginBean.loggedIn}" action="#{applicationBean.navigate2ApprovedApplications()}">
+                <p:graphicImage value="resources/icons/application.png" width="18" height="18"/><span class="nav-text">Approved Applications</span>
+            </h:commandLink>
+            <h:commandLink rendered="#{loginBean.loggedIn}" action="createLearningAgreement.xhtml">
+                <p:graphicImage value="resources/icons/edit.png" width="18" height="18"/><span class="nav-text">Learning Agreement</span>
+            </h:commandLink>
+            <h:commandLink rendered="#{loginBean.loggedIn}" action="#{loginBean.doLogout()}">
+                <p:graphicImage value="resources/icons/user.png" width="18" height="18"/><span class="nav-text"><h:outputText value="#{loginBean.user.firstName} #{loginBean.user.lastName}"/></span>
+            </h:commandLink>
+            <h:commandLink id="loginLink" rendered="#{!loginBean.loggedIn}" action="login.xhtml">
+                <p:graphicImage value="resources/icons/user_outline.png" width="18" height="18"/><span class="nav-text"></span>
+            </h:commandLink>
+            <a href="javascript:void(0);" class="icon" onclick="topBurger()">
+                <i class="material-icons">dehaze</i>
+            </a>
+        </h:form>
+    </div>
+
+    <script>
+        function topBurger() {
+            var x = document.getElementById("examNavBar");
+            if (x.className === "topnav") {
+                x.className += " responsive";
+            } else {
+                x.className = "topnav";
+            }
+        }
+    </script>
+
+</ui:composition>

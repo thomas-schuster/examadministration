@@ -1,22 +1,27 @@
 package de.hspf.swt.exam.administration.cdi;
 
+import de.hspf.swt.exam.administration.cdi.model.ListedLearningAgreementItem;
 import de.hspf.swt.exam.administration.control.LearningAgreementController;
 import de.hspf.swt.exam.administration.dao.ApplicationItem;
 import de.hspf.swt.exam.administration.dao.HomeCourse;
 import de.hspf.swt.exam.administration.dao.HostCourse;
 import de.hspf.swt.exam.administration.dao.LearningAgreement;
 import de.hspf.swt.exam.administration.dao.LearningAgreementItem;
-import de.hspf.swt.exam.administration.dao.Student;
+import de.hspf.swt.exam.administration.dao.facade.LearningAgreementFacade;
 import java.io.Serializable;
-import java.util.ArrayList;
-import javax.annotation.PostConstruct;
+import java.util.List;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.Conversation;
+import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.inject.Instance;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.primefaces.event.CellEditEvent;
+import org.primefaces.event.RowEditEvent;
 
 /**
  *
@@ -25,72 +30,148 @@ import org.apache.logging.log4j.Logger;
  *
  */
 @Named(value = "learningAgreementBean")
-@SessionScoped
+@ConversationScoped
 public class LearningAgreementBean implements Serializable {
 
-    private static final long serialVersionUID = -7582832515176544993L;
     private static final Logger logger = LogManager.getLogger(LearningAgreementBean.class);
+    private static final long serialVersionUID = -7582832515176544993L;
 
-    private ApplicationItem applicationItem;
-    private ArrayList<ApplicationItem> applicationItems;
-    private LearningAgreementItem currentLearningAgreementItem;
-    private LearningAgreement learningAgreement;
-    @EJB
-    LearningAgreementController learningAgreementController;
+    
+    @Inject
+    private Conversation conversation;
+
     @Inject
     LoginBean loginBean;
-    private boolean renderAddHomeCourseButton = false;
-    private boolean renderAddHostCourseButton = false;
-    private boolean renderCreateNextLAItem = false;
-    private ArrayList<HomeCourse> selectableHomeCourses;
-    private ArrayList<HostCourse> selectableHostCourses;
-    private Student student;
+    @Inject
+    Instance<CourseBean> courseBean;
+
+    @EJB
+    LearningAgreementFacade learningAgreementManager; 
+    
+    private ApplicationItem applicationItem;
+    private LearningAgreement learningAgreement;
+    private List<LearningAgreementItem> learningAgreementItems;
 
     public LearningAgreementBean() {
     }
 
-    private void adaptSelectableCourseLists(LearningAgreement learningAgreement) {
-        learningAgreement.getLearningAgreementItems().stream().map((item) -> {
-            item.getHomeCourses().forEach((homeCourse) -> {
-                selectableHomeCourses.remove(homeCourse);
-            });
-            return item;
-        }).forEachOrdered((item) -> {
-            item.getHostCourses().forEach((hostCourse) -> {
-                selectableHostCourses.remove(hostCourse);
-            });
-        });
+    public void initObjects( ApplicationItem appItem ) {
+        applicationItem = appItem;
+        initLearningAgreement();
+        learningAgreementItems = learningAgreement.getLearningAgreementItems();
     }
 
-    public String doCreateLearningAgreement(ApplicationItem applicationItem) {
-        this.applicationItem = applicationItem;
-        selectableHomeCourses = learningAgreementController.getHomeCourses(applicationItem);
-        selectableHostCourses = learningAgreementController.getHostCourses(applicationItem);
-        if (learningAgreementController.checkIfLaExistsForAppplicationItem(applicationItem)) {
-            learningAgreement = learningAgreementController.getLearningAgreement();
-            adaptSelectableCourseLists(learningAgreement);
-            renderAddHomeCourseButton = false;
-            renderAddHostCourseButton = false;
-            renderCreateNextLAItem = true;
-        } else {
-            learningAgreement = learningAgreementController.createLearningAgreement(applicationItem);
-            currentLearningAgreementItem = learningAgreement.getLearningAgreementItems().get(0);
-            renderAddHomeCourseButton = true;
-            logger.info("LearningAgreement information, id: " + learningAgreement.getId() + ", created: " + learningAgreement.getDateOfCreation());
-            logger.info("LearningAgreementItem information, id: " + currentLearningAgreementItem.getId());
+    private void initLearningAgreement() {
+//        if ( applicationItem.getLearningAgreement() == null ) {
+//            logger.info("created new learning agreement for application item: " + applicationItem.getId());
+//            setLearningAgreement(loginBean.getStudent().createLearningAgreement(applicationItem));
+//        } else {
+            setLearningAgreement(applicationItem.getLearningAgreement());
+//        }
+    }
+
+    public String navigate2Applications() {
+        conversation.end();
+        return "selectApplicationItem.xhtml";
+    }
+    
+    public void navigate2LearningAgreementItem() {
+        logger.info("initialize CourseBean");
+        courseBean.get().init(getHomeCourses(), getHostCourses());
+    }
+
+    public void navigate2LearningAgreementItem( LearningAgreementItem item ) {
+        logger.info("open CourseBean");
+        courseBean.get().open(getHomeCourses(), getHostCourses(), item);
+    }
+
+    public void handleReturn() {
+        logger.info("returned from Learing Agreement selection");
+        if ( courseBean.get().isSelectionComplete() ) {
+            logger.info("user selection is complete");
+            LearningAgreementItem item = courseBean.get().returnLearningAgreementItem();
+            if (!getLearningAgreementItems().contains(item) && courseBean.get().isSelectionComplete() ) {
+                addLearningAgreementItem(item);
+                courseBean.get().cancelSelection();
+            }
         }
-        return "createLA.xhtml";
+
+    }
+    
+    private List<HomeCourse> getHomeCourses() {
+        List<HomeCourse> homeCourses = getApplicationItem().getHomeCourses();
+        logger.info("number of home courses: " + homeCourses.size());
+        // remove all home course that have already been selected in a learning agreement item for the current learning agreement
+        getLearningAgreementItems().forEach((item) -> {
+            homeCourses.removeAll(item.getHomeCourses());
+        });
+        logger.info("updated number of home courses: " + homeCourses.size());
+        return homeCourses;
     }
 
-    public String doGetApprovedApplications() {
-        applicationItems = (ArrayList<ApplicationItem>) learningAgreementController.getApprovedApplicationItems(student);
+    private List<HostCourse> getHostCourses() {
+        List<HostCourse> hostCourses = getApplicationItem().getHostCourses();
+        logger.info("number of host courses: " + hostCourses.size());
+        // remove all host course that have already been selected in a learning agreement item for the current learning agreement
+        getLearningAgreementItems().forEach((item) -> {
+            hostCourses.removeAll(item.getHostCourses());
+        });;
+        logger.info("updated number of host courses: " + hostCourses.size());
+        return hostCourses;
+    }
+    
+    public void deleteLearningAgreementItem( LearningAgreementItem item) {
+        logger.info("remove learning agreement item: " + item.getId());
+        getLearningAgreementItems().remove(item);
+    }
+    
+    public String saveLearningAgreement() {
+        learningAgreementManager.edit(learningAgreement);
+        return null;
+    }
 
-        switch (applicationItems.size()) {
-            case 0:
-                FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-                return "noApprovedApplicationFound.xhtml";
-            default:
-                return "selectApplicationItem.xhtml";
+    
+    /**
+     * *
+     * This method is used to create a new or edit an existing {@link de.hspf.swt.exam.administration.dao.LearningAgreement}
+     * for a given {@link de.hspf.swt.exam.administration.dao.ApplicationItem}. When the
+     * {@link de.hspf.swt.exam.administration.dao.LearningAgreement} has been loaded, the method will return a next step
+     * (html page) to display for further editiing.
+     *
+     * @param applicationItem - the {@link de.hspf.swt.exam.administration.dao.ApplicationItem} to create/edit
+     * {@link de.hspf.swt.exam.administration.dao.LearningAgreement} for
+     * @return the page to display in a next step
+     */
+    public String doEditLearningAgreement( ApplicationItem applicationItem ) {
+        return null;
+    }
+
+    public String doCreateNextLearningAgreementItem() {
+        return null;
+    }
+
+    public String doDeleteLearningAgreementItem( int laItemNo ) {
+        return null;
+    }
+
+
+    public void onRowEdit( RowEditEvent event ) {
+        FacesMessage msg = new FacesMessage("LearningAgreementItem Edited", ((ListedLearningAgreementItem) event.getObject()).getItemNo());
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
+    public void onRowCancel( RowEditEvent event ) {
+        FacesMessage msg = new FacesMessage("Edit Cancelled", ((ListedLearningAgreementItem) event.getObject()).getItemNo());
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
+    public void onCellEdit( CellEditEvent event ) {
+        Object oldValue = event.getOldValue();
+        Object newValue = event.getNewValue();
+
+        if ( newValue != null && !newValue.equals(oldValue) ) {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
         }
     }
 
@@ -98,86 +179,32 @@ public class LearningAgreementBean implements Serializable {
         return applicationItem;
     }
 
-    public void setApplicationItem(ApplicationItem applicationItem) {
+    public void setApplicationItem( ApplicationItem applicationItem ) {
         this.applicationItem = applicationItem;
-    }
-
-    public ArrayList<ApplicationItem> getApplicationItems() {
-        return applicationItems;
-    }
-
-    public void setApplicationItems(ArrayList<ApplicationItem> applicationItems) {
-        this.applicationItems = applicationItems;
-    }
-
-    public LearningAgreementItem getCurrentLearningAgreementItem() {
-        return currentLearningAgreementItem;
-    }
-
-    public void setCurrentLearningAgreementItem(LearningAgreementItem currentLearningAgreementItem) {
-        this.currentLearningAgreementItem = currentLearningAgreementItem;
     }
 
     public LearningAgreement getLearningAgreement() {
         return learningAgreement;
     }
 
-    public void setLearningAgreement(LearningAgreement learningAgreement) {
+    public void setLearningAgreement( LearningAgreement learningAgreement ) {
         this.learningAgreement = learningAgreement;
     }
 
-    public ArrayList<HomeCourse> getSelectableHomeCourses() {
-        return selectableHomeCourses;
+    public List<LearningAgreementItem> getLearningAgreementItems() {
+        return learningAgreementItems;
     }
 
-    public void setSelectableHomeCourses(ArrayList<HomeCourse> selectableHomeCourses) {
-        this.selectableHomeCourses = selectableHomeCourses;
+    public void setLearningAgreementItems( List<LearningAgreementItem> learningAgreementItems ) {
+        this.learningAgreementItems = learningAgreementItems;
     }
 
-    public ArrayList<HostCourse> getSelectableHostCourses() {
-        return selectableHostCourses;
+    public void addLearningAgreementItem( LearningAgreementItem item ) {
+        this.learningAgreementItems.add(item);
     }
 
-    public void setSelectableHostCourses(ArrayList<HostCourse> selectableHostCourses) {
-        this.selectableHostCourses = selectableHostCourses;
-    }
-
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
-    }
-
-    public boolean isRenderAddHomeCourseButton() {
-        return renderAddHomeCourseButton;
-    }
-
-    public void setRenderAddHomeCourseButton(boolean renderAddHomeCourseButton) {
-        this.renderAddHomeCourseButton = renderAddHomeCourseButton;
-    }
-
-    public boolean isRenderAddHostCourseButton() {
-        return renderAddHostCourseButton;
-    }
-
-    public void setRenderAddHostCourseButton(boolean renderAddHostCourseButton) {
-        this.renderAddHostCourseButton = renderAddHostCourseButton;
-    }
-
-    public boolean isRenderCreateNextLAItem() {
-        return renderCreateNextLAItem;
-    }
-
-    public void setRenderCreateNextLAItem(boolean renderCreateNextLAItem) {
-        this.renderCreateNextLAItem = renderCreateNextLAItem;
-    }
-
-    @PostConstruct
-    public void loadStudent() {
-        String userId = loginBean.getUserData().getUserId();
-        student = learningAgreementController.loadStudent(userId);
+    public void removeLearningAgreementItem( LearningAgreementItem item ) {
+        this.learningAgreementItems.remove(item);
     }
 
 }

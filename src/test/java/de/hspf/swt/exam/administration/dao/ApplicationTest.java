@@ -1,7 +1,7 @@
 package de.hspf.swt.exam.administration.dao;
 
 import de.hspf.swt.exam.administration.dao.facade.ApplicationFacade;
-import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,7 +59,7 @@ public class ApplicationTest {
         logger.info("getApprovedApplicationItemsWithOne");
         application.getApplicationItems().get(0).setAdmitted(true);
         int expResult = 1;
-        ArrayList<ApplicationItem> result = application.getApprovedApplicationItems();
+        List<ApplicationItem> result = application.getApprovedApplicationItems();
         assertEquals(expResult, result.size());
         logger.info("Number of expected approved items: " + result.size());
     }
@@ -68,7 +68,7 @@ public class ApplicationTest {
     public void testNoApprovedApplicationItems() {
         logger.info("getApprovedApplicationItemsWithZero");
         int expResult = 0;
-        ArrayList<ApplicationItem> result = application.getApprovedApplicationItems();
+        List<ApplicationItem> result = application.getApprovedApplicationItems();
         assertEquals(expResult, result.size());
         logger.info("Number of expected approved items: " + result.size());
     }

@@ -22,10 +22,8 @@ public class Student extends User {
 
     @OneToMany(mappedBy = "student")
     private List<Application> applications;
-    private String firstName;
     @ManyToOne
     private HomeUniversity homeUniversity;
-    private String lastName;
 
     @OneToMany
     private List<LearningAgreement> learningAgreements;
@@ -44,15 +42,15 @@ public class Student extends User {
     public Student(String lastName, String firstName) {
         applications = new ArrayList<>();
         learningAgreements = new ArrayList<>();
-        this.lastName = lastName;
-        this.firstName = firstName;
+        super.lastName = lastName;
+        super.firstName = firstName;
     }
 
     public Student(String lastName, String firstName, int studentID) {
         applications = new ArrayList<>();
         learningAgreements = new ArrayList<>();
-        this.lastName = lastName;
-        this.firstName = firstName;
+        super.lastName = lastName;
+        super.firstName = firstName;
         this.studentID = studentID;
     }
 
@@ -61,8 +59,8 @@ public class Student extends User {
         applications = new ArrayList<>();
         learningAgreements = new ArrayList<>();
         this.studentID = studentId;
-        this.lastName = name;
-        this.firstName = vorname;
+        super.lastName = name;
+        super.firstName = vorname;
         this.studyProgram = studyProgram;
         this.homeUniversity = homeUniversity;
     }
@@ -88,30 +86,30 @@ public class Student extends User {
     }
 
     public ArrayList<ApplicationItem> getApprovedApplicationItems() {
-        ArrayList<ApplicationItem> approvedApplicationItems = new ArrayList<>();
+        ArrayList<ApplicationItem> applicationItems = new ArrayList<>();
         for (Application application : applications) {
-            approvedApplicationItems.addAll(application.getApprovedApplicationItems());
+            applicationItems.addAll(application.getApprovedApplicationItems());
         }
-        return approvedApplicationItems;
+        return applicationItems;
+    }
+    
+    public ArrayList<ApplicationItem> getNotApprovedApplicationItems() {
+        ArrayList<ApplicationItem> applicationItems = new ArrayList<>();
+        for (Application application : applications) {
+            applicationItems.addAll(application.getNotApprovedApplicationItems());
+        }
+        return applicationItems;
     }
 
     public ArrayList<ApplicationItem> getApprovedApplicationItemsInitial() {
         return null;
     }
 
-    public List getCourses() {
+    public List<HomeCourse> getCourses() {
         return studyProgram.getCourses();
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public List getHomeCourses() {
+    public List<HomeCourse> getHomeCourses() {
         return studyProgram.getCourses();
     }
 
@@ -121,14 +119,6 @@ public class Student extends User {
 
     public void setHomeUniversity(HomeUniversity homeUniversity) {
         this.homeUniversity = homeUniversity;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public LearningAgreement getLearningAgreementOfApplicationItem(ApplicationItem applicationItem) {

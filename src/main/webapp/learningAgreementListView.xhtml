@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="./WEB-INF/templates/template.xhtml">
+    <ui:define name="content">
+        <style type="text/css">
+            .ui-row-editor .ui-row-editor-pencil {
+                margin-left:8px;
+            }
+        </style>
+        <div class="standard-body">
+            <h2>Application Information</h2>
+            <div id="crdStudentData" class="grid2-container">
+                <div class="card">
+                    <div class="container">
+                        <div class="p-grid">
+                            <div class="p-col-12 p-md-2 p-lg-3">
+                                <p:graphicImage value="resources/images/img_avatar.png" width="100%" styleClass="img-round"/>
+                            </div>
+                            <div class="p-col-12 p-md-10 p-lg-9">
+                                <div class="p-grid">
+                                    <div class="p-col-12">
+                                        <h:outputText id="userName" value="#{loginBean.user.firstName} #{loginBean.user.lastName}" styleClass="text-bold"/>
+                                    </div>
+                                    <div class="p-col-12 p-md-5 p-lg-4">
+                                        <h:outputLabel for="studentId" value="Student ID: "/>
+                                    </div>
+                                    <div class="p-col-12 p-md-7 p-lg-8">
+                                        <h:outputText  id="studentId" value="#{loginBean.student.studentID}"/>
+                                    </div>
+                                    <div class="p-col-12 p-md-5 p-lg-4">
+                                        <h:outputLabel for="studyProgram" value="Study Program: "/> 
+                                    </div>
+                                    <div class="p-col-12 p-md-7 p-lg-8">
+                                        <h:outputText id="studyProgram" value="#{loginBean.student.studyProgram.programTitle}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="crdHostUniversity" class="card">
+                    <div class="container">
+                        <div class="p-grid">
+                            <div class="p-col-12 p-md-5 p-lg-4">
+                                <h:outputLabel for="studyPeriod" value="Study Period: " styleClass="text-bold"/>   
+                            </div>
+                            <div class="p-col-12 p-md-7 p-lg-8">
+                                <h:outputText id="studyPeriod" value="#{learningAgreementBean.applicationItem.application.startSemester} to 
+                                              #{learningAgreementBean.applicationItem.application.lastSemester}"/> 
+                            </div>
+                            <div class="p-col-12 p-md-5 p-lg-4">
+                                <b><h:outputLabel for="hostUniv" value="Host University: " styleClass="text-bold"/></b>
+                            </div>
+                            <div class="p-col-12 p-md-7 p-lg-8">
+                                <h:outputText id="hostUniv" value="#{learningAgreementBean.applicationItem.hostUniversity.universityName}"/>
+                            </div>
+                            <div class="p-col-12 p-md-5 p-lg-4">
+                                <b><h:outputLabel for="hostCountry" value="Country: " styleClass="text-bold"/></b>
+                            </div>
+                            <div class="p-col-12 p-md-7 p-lg-8">
+                                <h:outputText id="hostCountry" value="#{learningAgreementBean.applicationItem.hostUniversity.country.countryName}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/><br/>
+            <h:form id="frmItemList">
+                <p:growl id="msgs" showDetail="true"/>
+                <h2>List of Learning Agreement Items</h2>
+                <c:forEach var = "i" begin = "1" end = "#{fn:length(learningAgreementBean.learningAgreementItems)}">
+                    <p:panel id="custom" header="Learning Agreement Item #{i}" style="margin-bottom:20px">
+                        <div class="p-grid">
+                            <div class="p-col-12 p-md-6 p-lg-6">
+                                <div class="box">
+                                    <h4>Home Courses</h4>
+                                    <c:forEach items="#{learningAgreementBean.learningAgreementItems[i].homeCourses}" var="homeC">
+                                        <h:outputText value="#{homeC.courseTitle}" /><br/>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                            <div class="p-col-12 p-md-6 p-lg-6">
+                                <div class="box">
+                                    <h4>Host Courses</h4>
+                                    <c:forEach items="#{learningAgreementBean.learningAgreementItems[i].hostCourses}" var="hostC">
+                                        <h:outputText value="#{hostC.courseTitle}" /><br/>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                        </div>
+                        <f:facet name="actions">
+                            <p:commandLink styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" actionListener="#{learningAgreementBean.navigate2LearningAgreementItem(learningAgreementBean.learningAgreementItems[i])}" onclick="PF('itemsDialog').show();"><h:outputText styleClass="fa fa-fw fa-edit" /></p:commandLink>
+                            <p:commandLink styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" actionListener="#{learningAgreementBean.deleteLearningAgreementItem(learningAgreementBean.learningAgreementItems[i])}" update="@form"><h:outputText styleClass="fa fa-fw fa-trash" /></p:commandLink>
+                        </f:facet>
+                    </p:panel>
+                </c:forEach>
+
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-6 ui-lg-1">
+                        <p:commandButton id="addLAItem" value="Add Item" 
+                                         icon="fa fa-fw fa-plus" style="min-width:130px;"
+                                         action="#{learningAgreementBean.navigate2LearningAgreementItem()}"
+                                         oncomplete="PF('itemsDialog').show();"
+                                         update="dlgItems"/>
+                    </div>
+
+                    <div class="ui-g-12 ui-md-6 ui-lg-1">
+                        <p:commandButton id="saveLA" value="Save" 
+                                         action="#{learningAgreementBean.saveLearningAgreement()}"
+                                         immediate="true" icon="fa fa-fw fa-save" style="min-width:130px;"/> 
+                    </div>
+                    
+                    <div class="ui-g-12 ui-md-6 ui-lg-1">
+                        <p:commandButton id="exitLA" value="Close" 
+                                         action="#{learningAgreementBean.navigate2Applications()}"
+                                         immediate="true" icon="fa fa-fw fa-close" style="min-width:130px;"/> 
+                    </div>
+                    
+                </div>
+
+            </h:form>
+            <p:dialog id="dlgItems" widgetVar="itemsDialog" showEffect="fade" header="Create Learning Agreement Item" dynamic="true">
+                <ui:include src="./includes/createLearningAgreementItem.xhtml" />
+                <p:ajax event="close" listener="#{learningAgreementBean.handleReturn()}" update="frmItemList" />
+            </p:dialog>
+            <h:messages styleClass="error"/>
+        </div>
+    </ui:define>   
+</ui:composition>
+
+

@@ -47,12 +47,12 @@ public class LearningAgreementItem implements Serializable, Comparable<LearningA
         homeCourses = new ArrayList<>();
     }
 
-    public void addHomeCourse(HomeCourse homeCourse, boolean noWarning)
+    public void addHomeCourse( HomeCourse homeCourse, boolean noWarning )
             throws MoreThanOneHomeCourseWarning {
-        if (homeCourses.isEmpty()) {
+        if ( homeCourses.isEmpty() ) {
             homeCourses.add(homeCourse);
         } else {
-            if (noWarning) {
+            if ( noWarning ) {
                 homeCourses.add(homeCourse);
             } else {
                 throw new MoreThanOneHomeCourseWarning();
@@ -60,16 +60,16 @@ public class LearningAgreementItem implements Serializable, Comparable<LearningA
         }
     }
 
-    public void addHostCourse(HostCourse hostCourse, boolean noWarning)
+    public void addHostCourse( HostCourse hostCourse, boolean noWarning )
             throws OnlyOneHostCourseException, MoreThanOneHostCourseWarning {
-        if (hostCourses.isEmpty()) {
+        if ( hostCourses.isEmpty() ) {
             hostCourses.add(hostCourse);
         } else {
             logger.info("Size of HomeCourses is: " + homeCourses.size());
-            if (homeCourses.size() > 1) {
+            if ( homeCourses.size() > 1 ) {
                 throw new OnlyOneHostCourseException(homeCourses.size());
             } else {
-                if (noWarning) {
+                if ( noWarning ) {
                     hostCourses.add(hostCourse);
                 } else {
                     throw new MoreThanOneHostCourseWarning();
@@ -79,7 +79,7 @@ public class LearningAgreementItem implements Serializable, Comparable<LearningA
     }
 
     @Override
-    public int compareTo(LearningAgreementItem learningAgreementItem) {
+    public int compareTo( LearningAgreementItem learningAgreementItem ) {
         return new Integer(this.posNo).compareTo(learningAgreementItem.getPosNo());
     }
 
@@ -87,7 +87,7 @@ public class LearningAgreementItem implements Serializable, Comparable<LearningA
         return homeCourses;
     }
 
-    public void setHomeCourses(List<HomeCourse> homeCourses) {
+    public void setHomeCourses( List<HomeCourse> homeCourses ) {
         this.homeCourses = homeCourses;
     }
 
@@ -95,7 +95,7 @@ public class LearningAgreementItem implements Serializable, Comparable<LearningA
         return hostCourses;
     }
 
-    public void setHostCourses(List<HostCourse> hostCourses) {
+    public void setHostCourses( List<HostCourse> hostCourses ) {
         this.hostCourses = hostCourses;
     }
 
@@ -103,7 +103,7 @@ public class LearningAgreementItem implements Serializable, Comparable<LearningA
         return id;
     }
 
-    public void setId(String id) {
+    public void setId( String id ) {
         this.id = id;
     }
 
@@ -111,7 +111,7 @@ public class LearningAgreementItem implements Serializable, Comparable<LearningA
         return posNo;
     }
 
-    public void setPosNo(int posNo) {
+    public void setPosNo( int posNo ) {
         this.posNo = posNo;
     }
 

@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <h:form id="frmCreateLearningAgreementItems">
+        <p:messages id="errorMessages"/>
+        <div class="p-grid">
+            <div class="p-col-12 p-md-6 p-lg-6">          
+                <p:outputLabel for="selHomeCourses" value="Home Course(s):" />
+                <p:selectManyMenu id="selHomeCourses" value="#{courseBean.selectedHomeCourses}" converter="#{courseConverter}"
+                                  var="dc" filter="true" filterMatchMode="contains" showCheckbox="true" validatorMessage="Bitte wählen Sie zuerst einen Kurs.">
+                    <f:selectItems value="#{courseBean.homeCourses}" var="homeCourses" itemLabel="#{homeCourses.courseTitle}" itemValue="#{homeCourses}" />
+
+                    <p:column>
+                        <h:outputText value="#{dc.courseTitle}" />
+                    </p:column>
+
+                    <p:column>
+                        <h:outputText value="#{dc.ects}" />
+                    </p:column>
+                </p:selectManyMenu>
+            </div>
+
+            <div class="p-col-12 p-md-6 p-lg-6">            
+                <p:outputLabel for="selHostCourses" value="Host Course(s):" />
+                <p:selectManyMenu id="selHostCourses" value="#{courseBean.selectedHostCourses}" converter="#{courseConverter}"
+                                  var="hc" filter="true" filterMatchMode="contains" showCheckbox="true" validatorMessage="Bitte wählen Sie zuerst einen Kurs der Gasthochschule.">
+                    <f:selectItems value="#{courseBean.hostCourses}" var="hostCourses" itemLabel="#{hostCourses.courseTitle}" itemValue="#{hostCourses}" />
+
+                    <p:column>
+                        <h:outputText value="#{hc.courseTitle}" />
+                    </p:column>
+
+                    <p:column>
+                        <h:outputText value="#{hc.ects}" />
+                    </p:column>
+                </p:selectManyMenu>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-2">
+                <p:commandButton value="Add Item" style="width: 120px" icon="fa fa-fw fa-save" update="@form" action="#{courseBean.finishSelection()}"  oncomplete="if (!args.validationFailed) PF('itemsDialog').hide()"  />
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-2">
+                <p:commandButton value="Cancel" style="width: 120px" icon="fa fa-fw fa-remove" update="@form" action="#{courseBean.cancelSelection()}" oncomplete="PF('itemsDialog').hide()"/>
+            </div>
+        </div>
+    </h:form>
+    
+</ui:composition>

@@ -66,14 +66,30 @@ public class Application implements Serializable {
         this.applicationItems = applicationItems;
     }
 
-    public ArrayList<ApplicationItem> getApprovedApplicationItems() {
+    public List<ApplicationItem> getApprovedApplicationItems() {
         ArrayList<ApplicationItem> approvedApplicationItems = new ArrayList<>();
+        return extractApplicationItems2List(approvedApplicationItems, true);
+    }
+    
+    public List<ApplicationItem> getNotApprovedApplicationItems() {
+        ArrayList<ApplicationItem> approvedApplicationItems = new ArrayList<>();
+        return extractApplicationItems2List(approvedApplicationItems, false);
+    }
+
+    /***
+     * This method will check the status of ApplicationItems
+     * 
+     * @param applicationItems2Check list of ApplicationItems to work with
+     * @param isAdmitted defines if only approved ApplicationItems should be returned
+     * @return all ApplicationItems with a defined status
+     */
+    private List<ApplicationItem> extractApplicationItems2List(List<ApplicationItem> applicationItems2Check, boolean isAdmitted) {
         for (ApplicationItem applicationItem : applicationItems) {
-            if (applicationItem.isAdmitted()) {
-                approvedApplicationItems.add(applicationItem);
+            if (applicationItem.isAdmitted() == isAdmitted) {
+                applicationItems2Check.add(applicationItem);
             }
         }
-        return approvedApplicationItems;
+        return applicationItems2Check;
     }
 
     public Date getDateOfCreation() {

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    <h2>Create new Host Course</h2>
+    <h:form id="newHostCourse">
+        <div class="p-grid">
+            <div class="p-col-12 p-md-6 p-lg-1">
+                <p:outputLabel for="courseId" value="Course ID"/>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-3">
+                <p:inputText id="courseId" required="true" 
+                             requiredMessage="Please enter Course Id"
+                             title="e.g. Mgmt4240"
+                             value="#{learningAgreementBean.courseId}"/> 
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-1">
+                <p:outputLabel for="courseTitle" value="Course Title"/></div>
+            <div class="p-col-12 p-md-6 p-lg-3">
+                <p:inputText id="courseTitle" required="true" 
+                             requiredMessage="Please enter Course Title"
+                             value="#{learningAgreementBean.courseTitle}"/> 
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-1">
+                <p:outputLabel for="credits" value="Credits"/></div>
+            <div class="p-col-12 p-md-6 p-lg-3">
+                <p:inputText id="credits" required="true"
+                             requiredMessage="Please enter number of credits"
+                             title="For European universities ECTS, for others the domestic credit value"
+                             value="#{learningAgreementBean.ects}"/>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-4">
+                <p:commandButton id="createNewHostCourse" value="Create New Host Course" 
+                                 action="#{learningAgreementBean.doCreateHostCourse()}"
+                                 title="If you miss a course in the host university selection box, you can add an additional one"/>
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-8">
+                <h:outputText value="New Host Course now in select box" 
+                              rendered="#{learningAgreementBean.renderNewHostCourseCreated}"/><br/>   
+            </div>
+        </div>
+    </h:form>                
+</ui:composition>
+
+

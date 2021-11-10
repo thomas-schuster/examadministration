@@ -20,6 +20,8 @@ import javax.validation.constraints.Size;
 @NamedQuery(name = "User.loginUser", query = "Select u from User u where u.userId = :userId and u.password= :password")
 public class User implements Serializable {
 
+    String firstName;
+    String lastName;
     @Size(min = 4, message = " - password must be longer than 3 letters")
     private String password;
     //userId is expected to be in email format
@@ -33,6 +35,22 @@ public class User implements Serializable {
     public User(String userId, String password) {
         this.userId = userId;
         this.password = password;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassword() {

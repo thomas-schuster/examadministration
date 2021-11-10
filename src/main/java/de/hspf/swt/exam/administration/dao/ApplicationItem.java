@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -24,6 +26,8 @@ public class ApplicationItem implements Serializable {
     private HostUniversity hostUniversity;
     @Id
     private String id;
+    @OneToOne(mappedBy = "applicationItem")
+    private LearningAgreement learningAgreement;
     private int posNumber;
     private int priority;
 
@@ -31,31 +35,43 @@ public class ApplicationItem implements Serializable {
         id = UUID.randomUUID().toString();
     }
 
-    public ApplicationItem(int posNo, int priority, HostUniversity hostUniversity, Application application) {
+    public ApplicationItem( int posNo, int priority, HostUniversity hostUniversity, Application application ) {
         this();
         this.posNumber = posNo;
         this.priority = priority;
         this.hostUniversity = hostUniversity;
         this.application = application;
     }
+
     public Application getApplication() {
         return application;
     }
-    public void setApplication(Application application) {
+
+    public void setApplication( Application application ) {
         this.application = application;
     }
+
     public List getHomeCourses() {
         return getStudent().getHomeCourses();
     }
+
     public List getHostCourses() {
         return hostUniversity.getCourses();
+    }
+
+    public LearningAgreement getLearningAgreement() {
+        return learningAgreement;
+    }
+
+    public void setLearningAgreement( LearningAgreement learningAgreement ) {
+        this.learningAgreement = learningAgreement;
     }
 
     public HostUniversity getHostUniversity() {
         return hostUniversity;
     }
 
-    public void setHostUniversity(HostUniversity hostUniversity) {
+    public void setHostUniversity( HostUniversity hostUniversity ) {
         this.hostUniversity = hostUniversity;
     }
 
@@ -63,7 +79,7 @@ public class ApplicationItem implements Serializable {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId( String id ) {
         this.id = id;
     }
 
@@ -71,7 +87,7 @@ public class ApplicationItem implements Serializable {
         return posNumber;
     }
 
-    public void setPosNumber(int posNumber) {
+    public void setPosNumber( int posNumber ) {
         this.posNumber = posNumber;
     }
 
@@ -79,7 +95,7 @@ public class ApplicationItem implements Serializable {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority( int priority ) {
         this.priority = priority;
     }
 
@@ -91,7 +107,7 @@ public class ApplicationItem implements Serializable {
         return admitted;
     }
 
-    public void setAdmitted(boolean admitted) {
+    public void setAdmitted( boolean admitted ) {
         this.admitted = admitted;
     }
 
