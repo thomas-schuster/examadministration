@@ -5,37 +5,49 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
-                template="./WEB-INF/templates/template.xhtml">
+                template="/WEB-INF/templates/template.xhtml">
     <ui:define name="content">
-        <h2 style="padding: 10px 16px;">Selectable Applications</h2>
         <div class="standard-body">
-            <br/>
+        <h2>Your Applications</h2>
             <h:form id="selectApprovedApplicationForm">
+            <h3 style="padding: 5px 0px 0px 0px;">Selectable Applications</h3>
                 <p:dataTable var="ai" value="#{applicationBean.approvedApplicationItems}" >
                     <p:column headerText="Host University">
                         <h:outputText value="#{ai.hostUniversity.universityName}"/>
                     </p:column>
 
-                    <p:column headerText="Last Select">
+                    <p:column headerText="Select">
                         <h:commandLink action="#{applicationBean.navigate2LearningAgreement(ai)}"
                                        title="If a learning agreement exists already you can edit it, otherwise you can create a new one"
                                        value="Edit or create learning agreement"/>                        
                     </p:column>
                 </p:dataTable>
+                <h3 style="padding: 5px 0px 0px 0px;">Approvment pending</h3>
+                <p:dataTable var="nai" value="#{applicationBean.notApprovedApplicationItems}" >
+                    <p:column headerText="Host University">
+                        <h:outputText value="#{nai.hostUniversity.universityName}"/>
+                    </p:column>
+
+                    <p:column headerText="Created">
+                        <h:outputText value="#{nai.application.dateOfCreation}" />        
+                    </p:column>
+                </p:dataTable>
+                
                 
                 <div class="ui-g">
                     <div class="ui-g-12 ui-md-6 ui-lg-1">
                         <p:commandButton id="addApplication" value="Application" 
                                          icon="fa fa-fw fa-plus" style="min-width:130px;"
-                                         action="#{applicationBean.createApplication()}"
                                          oncomplete="PF('itemsDialog').show();"
                                          update="dlgItems"/>
                     </div>
                 </div>
             </h:form>  
             
-            <p:dialog id="dlgItems" widgetVar="itemsDialog" showEffect="fade" header="Create Application" dynamic="true">
-                <ui:include src="./includes/createApplication.xhtml" />
+            <p:dialog id="dlgItems" widgetVar="itemsDialog" showEffect="fade" header="Create Application" dynamic="true" visible="display" modal="true" 
+                    responsive="true" style="width: 350px; minWidth: 200px"  
+                    maximizable="true">
+                <ui:include src="./dialogues/createApplication.xhtml" />
                 <p:ajax event="close" listener="#{applicationBean.handleReturn()}" update="selectApprovedApplicationForm" />
             </p:dialog>
         </div>

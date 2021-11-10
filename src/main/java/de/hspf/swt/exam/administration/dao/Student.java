@@ -54,7 +54,8 @@ public class Student extends User {
         this.studentID = studentID;
     }
 
-    public Student(String userId, String password, int studentId, String name, String vorname, StudyProgram studyProgram, HomeUniversity homeUniversity) {
+    public Student(String userId, String password, int studentId, String name, String vorname,
+            StudyProgram studyProgram, HomeUniversity homeUniversity) {
         super(userId, password);
         applications = new ArrayList<>();
         learningAgreements = new ArrayList<>();
@@ -65,8 +66,10 @@ public class Student extends User {
         this.homeUniversity = homeUniversity;
     }
 
-    public Application createApplication(String startingSemester, String lastSemester, String englishLanguageSkills, String motivation) {
-        Application newApplication = new Application(startingSemester, lastSemester, englishLanguageSkills, motivation, this);
+    public Application createApplication(String startingSemester, String lastSemester, String englishLanguageSkills,
+            String motivation) {
+        Application newApplication = new Application(startingSemester, lastSemester, englishLanguageSkills, motivation,
+                this);
         applications.add(newApplication);
         return newApplication;
     }
@@ -92,7 +95,7 @@ public class Student extends User {
         }
         return applicationItems;
     }
-    
+
     public ArrayList<ApplicationItem> getNotApprovedApplicationItems() {
         ArrayList<ApplicationItem> applicationItems = new ArrayList<>();
         for (Application application : applications) {
@@ -155,3 +158,5 @@ public class Student extends User {
     }
 
 }
+
+

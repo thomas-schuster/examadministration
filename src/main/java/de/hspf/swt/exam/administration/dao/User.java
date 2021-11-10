@@ -1,14 +1,18 @@
 package de.hspf.swt.exam.administration.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
@@ -28,13 +32,19 @@ public class User implements Serializable {
     @Id
     @Pattern(regexp = "[_\\w-]+(\\.[_\\w-]+)*@[\\w-]+(\\.[\\w]+)*(\\.[A-Za-z]{2,3})", message = " - no valid email")
     private String userId;
+    
+    @ManyToMany
+    private List<UserGroup> userGroups;
+    
 
     public User() {
+        this.userGroups = new ArrayList<>();
     }
 
     public User(String userId, String password) {
         this.userId = userId;
-        this.password = password;
+        this.password = DigestUtils.sha256Hex(password);
+        this.userGroups = new ArrayList<>();
     }
 
     public String getFirstName() {
@@ -58,7 +68,7 @@ public class User implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = DigestUtils.sha256Hex(password);
     }
 
     public String getUserId() {
@@ -69,4 +79,16 @@ public class User implements Serializable {
         this.userId = userId;
     }
 
+    public List<UserGroup> getUserGroups() {
+        return userGroups;
+    }
+
+    public void setUserGroups(List<UserGroup> userGroups) {
+        this.userGroups = userGroups;
+    }
+    
+     public void addUserGroup(UserGroup userGroup) {
+        this.userGroups.add(userGroup);
+    }
+    
 }

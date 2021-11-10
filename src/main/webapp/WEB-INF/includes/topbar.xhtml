@@ -9,19 +9,16 @@
     <div class="topnav" id="examNavBar">
         <h:form>
             <h:commandLink action="login.xhtml" class="active">
-                <p:graphicImage value="resources/icons/location.png" width="18" height="18"/><span class="nav-text">Study Abroad</span>
+                <p:graphicImage name="/icons/location.png" width="18" height="18"/><span class="nav-text">Study Abroad</span>
             </h:commandLink>
-            <h:commandLink rendered="#{loginBean.loggedIn}" action="#{applicationBean.navigate2ApprovedApplications(true)}">
+            <h:commandLink rendered="#{loginBean.loggedIn}" action="#{applicationBean.navigate2Applications()}">
                 <i class="pi pi-list"></i><span class="nav-text">Applications</span>
             </h:commandLink>
             <h:commandLink rendered="#{loginBean.loggedIn}" action="#{applicationBean.navigate2ApprovedApplications()}">
-                <p:graphicImage value="resources/icons/application.png" width="18" height="18"/><span class="nav-text">Approved Applications</span>
-            </h:commandLink>
-            <h:commandLink rendered="#{loginBean.loggedIn}" action="createLearningAgreement.xhtml">
-                <p:graphicImage value="resources/icons/edit.png" width="18" height="18"/><span class="nav-text">Learning Agreement</span>
+                <p:graphicImage name="/icons/application.png" width="18" height="18"/><span class="nav-text">Approved Applications</span>
             </h:commandLink>
             <h:commandLink rendered="#{loginBean.loggedIn}" action="#{loginBean.doLogout()}">
-                <p:graphicImage value="resources/icons/user.png" width="18" height="18"/><span class="nav-text"><h:outputText value="#{loginBean.user.firstName} #{loginBean.user.lastName}"/></span>
+                <p:graphicImage name="/icons/user.png" width="18" height="18"/><span class="nav-text"><h:outputText value="#{loginBean.user.firstName} #{loginBean.user.lastName}"/></span>
             </h:commandLink>
             <h:commandLink id="loginLink" rendered="#{!loginBean.loggedIn}" action="login.xhtml">
                 <p:graphicImage value="resources/icons/user_outline.png" width="18" height="18"/><span class="nav-text"></span>

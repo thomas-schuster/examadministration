@@ -4,7 +4,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./WEB-INF/templates/template.xhtml"
+                template="/WEB-INF/templates/template.xhtml"
                 xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
         <div class="standard-body">
@@ -15,7 +15,7 @@
                         <div class="container">
                             <div class="p-grid">
                                 <div class="p-col-12 p-md-2 p-lg-3">
-                                    <p:graphicImage value="resources/images/img_avatar.png" width="100%" styleClass="img-round"/>
+                                    <p:graphicImage value="../resources/images/img_avatar.png" width="100%" styleClass="img-round"/>
                                 </div>
                                 <div class="p-col-12 p-md-10 p-lg-9">
                                     <div class="p-grid">
@@ -112,7 +112,7 @@
                                  title="Finalizes the current LA-Item and provides a new LA-item"/>  
             </h:form>
             <br/><br/>
-            <!--<ui:include src="./WEB-INF/includes/createCourse.xhtml" />-->
+            <!--<ui:include src="/dialogues/createCourse.xhtml" />-->
             <br/>
             <f:view>
                 <h:form id="frmItemList">

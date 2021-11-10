@@ -14,6 +14,7 @@ import de.hspf.swt.exam.administration.dao.Student;
 import de.hspf.swt.exam.administration.dao.StudyProgram;
 import de.hspf.swt.exam.administration.dao.University;
 import de.hspf.swt.exam.administration.dao.User;
+import de.hspf.swt.exam.administration.dao.UserGroup;
 import de.hspf.swt.exam.administration.dao.facade.ApplicationFacade;
 import de.hspf.swt.exam.administration.dao.facade.ApplicationItemFacade;
 import de.hspf.swt.exam.administration.dao.facade.CountryFacade;
@@ -70,6 +71,7 @@ public class ApplicationStartupController {
     UserFacade userManager;
     @EJB
     DatabaseTool dataTooling;
+   
 
     @PostConstruct
     public void checkDatabase() {
@@ -107,6 +109,7 @@ public class ApplicationStartupController {
         Student student = createStudentUser();
         student.setHomeUniversity(irgendwo);
         student.setStudyProgram(studyProgram);
+        
         Application applicationLaramie = createApplication(student, laramie, lubljana);
 
         LearningAgreement agreement = applicationLaramie.getApplicationItems().get(0).getStudent().createLearningAgreement(applicationLaramie.getApplicationItems().get(0));
@@ -115,7 +118,6 @@ public class ApplicationStartupController {
             litem.addHomeCourse(studyProgram.getCourses().get(0), true);
             litem.addHostCourse(hostCourses.iterator().next(), true);
             litem.addHomeCourse(studyProgram.getCourses().get(1), true);
-            litem.addHostCourse(hostCourses.iterator().next(), true);
         } catch ( OnlyOneHostCourseException | MoreThanOneHostCourseWarning | MoreThanOneHomeCourseWarning ex ) {
             logger.error(ex);
         }
@@ -131,10 +133,10 @@ public class ApplicationStartupController {
     }
 
     private Application createApplication( Student student, HostUniversity laramie, HostUniversity lubljana ) {
-        Application application = student.createApplication("WS 2019/2020", "WS 2019/2020", "C1", "Strengthen intercultural skills");
-        ApplicationItem item1 = application.createApplicationItem(laramie, 1);
-
+        Application application = student.createApplication("WS 2020/2021", "WS 2020/2021", "C1", "Strengthen intercultural skills");
+        application.createApplicationItem(laramie, 1);
         application.createApplicationItem(lubljana, 2);
+
         application.getApplicationItems().get(0).setAdmitted(true);
 
         applicationManager.create(application);
@@ -173,6 +175,9 @@ public class ApplicationStartupController {
         Student student = new Student("Bosch", "Hugo");
         student.setUserId("hugo@bosch.cc");
         student.setPassword("modisch");
+        UserGroup group = new UserGroup();
+        group.setGroupName("student");
+        student.addUserGroup(group);
         studentManager.create(student);
         return student;
     }

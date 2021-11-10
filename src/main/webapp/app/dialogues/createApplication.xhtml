@@ -48,7 +48,7 @@
                 <p:outputLabel for="languageLevel" value="Language Level:" />
             </div>
             <div class="p-col-12 p-md-3 p-lg-4"> 
-                <p:selectOneMenu id="languageLevel" value="#{applicationBean.level}">
+                <p:selectOneMenu id="languageLevel" value="#{applicationBean.level}" >
                     <f:selectItems value="#{applicationBean.levels}" var="slevel" itemLabel="#{slevel.description}" itemValue="#{slevel.description}"/>
                 </p:selectOneMenu>
             </div>
@@ -56,27 +56,29 @@
                 <p:outputLabel for="startDate" value="Start Date:" />
             </div>
             <div class="p-col-12 p-md-3 p-lg-4"> 
-                <p:calendar id="startDate" value="#{applicationBean.startDate}" locale="de" navigator="true" required="true" pattern="dd. MMMM yyyy" />
+                <p:calendar id="startDate" value="#{applicationBean.startDate}" locale="de" navigator="true" required="true" pattern="dd. MMMM yyyy" style="min-width: 40px;"/>
             </div>
+            
             <div class="p-col-12 p-md-3 p-lg-2">   
                 <p:outputLabel for="endDate" value="End Date:" />
             </div>
             <div class="p-col-12 p-md-3 p-lg-4"> 
                 <p:calendar id="endDate" value="#{applicationBean.endDate}" locale="de" navigator="true" required="true" pattern="dd. MMMM yyyy" />
             </div>
+            
             <div class="p-col-12 p-md-3 p-lg-2">          
                 <p:outputLabel for="console" value="Host University:" />
             </div>
-
-            <div class="p-col-12 p-md-9 p-lg-10">   
+            <div class="p-col-12 p-md-3 p-lg-4">   
                 <p:selectOneMenu id="console" value="#{applicationBean.host}" converter="#{hostConverter}">
                     <f:selectItems value="#{applicationBean.hosts}" itemLabel="#{shost.universityName}" var="shost"/>
                 </p:selectOneMenu>
             </div>
-            <div class="p-col-12 p-md-6 p-lg-3">          
+            
+            <div class="p-col-12 p-md-6 p-lg-2">          
                 <p:commandButton value="Save" style="width: 120px" icon="fa fa-fw fa-save" update="@form" action="#{applicationBean.createApplication()}" oncomplete="if (!args.validationFailed) PF('itemsDialog').hide()" />
             </div>
-            <div class="p-col-12 p-md-6 p-lg-3">          
+            <div class="p-col-12 p-md-6 p-lg-2">          
                 <p:commandButton value="Cancel" style="width: 120px" icon="fa fa-fw fa-remove" oncomplete="PF('itemsDialog').hide()"  />
             </div>
         </div>

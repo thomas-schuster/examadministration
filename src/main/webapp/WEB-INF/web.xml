@@ -1,29 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>User Application</web-resource-name>
+            <url-pattern>/app/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+            <role-name>student</role-name>
+        </auth-constraint>        
+    </security-constraint>
+
+    <security-role>
+        <role-name>student</role-name>
+    </security-role>
+    <security-role>
+        <role-name>admin</role-name>
+    </security-role>
+     
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <param-value>Production</param-value>
+        <param-value>Development</param-value>
     </context-param>
     <context-param>
         <param-name>primefaces.THEME</param-name>
         <param-value>nova-light</param-value>
     </context-param>
     <context-param>
-        <param-name>primefaces.CLIENT_SIDE_VALIDATION</param-name>
-        <param-value>true</param-value>
-    </context-param>
-    <context-param>
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
     </context-param>
+    
+    <mime-mapping>
+        <extension>ttf</extension>
+        <mime-type>application/font-ttf</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>woff</extension>
+        <mime-type>application/font-woff</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>woff2</extension>
+        <mime-type>application/font-woff2</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>eot</extension>
+        <mime-type>application/font-eot</mime-type>
+    </mime-mapping>
+
+
+    
     <servlet>
-        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-name>faces-servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>/faces/*</url-pattern>
+        <servlet-name>faces-servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>document-servlet</servlet-name>
+        <servlet-class>de.hspf.swt.exam.administration.cdi.converter.PDFBoxCreator</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>document-servlet</servlet-name>
+        <url-pattern>/document</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -31,6 +74,6 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>faces/login.xhtml</welcome-file>
+        <welcome-file>login.xhtml</welcome-file>
     </welcome-file-list>
 </web-app>

@@ -5,15 +5,21 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./WEB-INF/templates/template.xhtml"
+                template="/WEB-INF/templates/template.xhtml"
                 xmlns:p="http://primefaces.org/ui">
+     
+    <ui:define name="top">
+        <!--navigation bar-->
+        <ui:include src="/WEB-INF/includes/navbar.xhtml" />
+    </ui:define>
+    
     <ui:define name="content" >
 
         <h2 style="padding: 10px 16px;">Learning Agreement Administration</h2>
         <div class="p-grid">
             <div class="p-col-12 p-md-6 p-lg-4" style="padding: 20px 46px;">
                 <div class="card">
-                    <p:graphicImage value="resources/images/img_avatar.png" width="100%"/>
+                    <p:graphicImage name="/images/img_avatar.png" width="100%"/>
                     <div class="container">
                         <h4><b><h:outputText id="userName" value="#{loginBean.user.firstName} #{loginBean.user.lastName}"/></b></h4> 
                         <p>Status: Student</p> 
@@ -32,6 +38,6 @@
                 </h:form>        
             </div>
         </div>
-
+        <p:growl id="growl" showDetail="true" severity="warn"/> 
     </ui:define>   
 </ui:composition>

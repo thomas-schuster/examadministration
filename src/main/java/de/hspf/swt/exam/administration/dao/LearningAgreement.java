@@ -35,7 +35,6 @@ public class LearningAgreement implements Serializable {
     public LearningAgreement() {
         dateOfCreation = new Date();
         learningAgreementItems = new ArrayList<>();
-        createLearningAgreementItem();
     }
 
     public LearningAgreement(ApplicationItem applicationItem) {
@@ -45,7 +44,7 @@ public class LearningAgreement implements Serializable {
 
     public final LearningAgreementItem createLearningAgreementItem() {
         LearningAgreementItem learningAgreementItem = new LearningAgreementItem();
-        learningAgreementItem.setPosNo(learningAgreementItems.size() + 1);
+        learningAgreementItem.setPosNumber(learningAgreementItems.size() + 1);
         learningAgreementItems.add(learningAgreementItem);
         return learningAgreementItem;
     }
@@ -101,7 +100,7 @@ public class LearningAgreement implements Serializable {
     public void reNumberingLearningAgreementItems() {
         int i = 1;
         for (LearningAgreementItem item : learningAgreementItems) {
-            item.setPosNo(i);
+            item.setPosNumber(i);
             i++;
         }
     }
@@ -109,7 +108,7 @@ public class LearningAgreement implements Serializable {
     public LearningAgreementItem removeLearningAgreementItem(int laItemNo) {
         LearningAgreementItem itemFound = null;
         for (LearningAgreementItem item : learningAgreementItems) {
-            if (item.getPosNo() == laItemNo) {
+            if (item.getPosNumber() == laItemNo) {
                 itemFound = item;
                 learningAgreementItems.remove(itemFound);
                 break;

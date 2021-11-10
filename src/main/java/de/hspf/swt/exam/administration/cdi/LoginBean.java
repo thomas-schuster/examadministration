@@ -1,20 +1,28 @@
 package de.hspf.swt.exam.administration.cdi;
 
-import de.hspf.swt.exam.administration.control.LearningAgreementController;
 import de.hspf.swt.exam.administration.control.LoginController;
 import de.hspf.swt.exam.administration.dao.Student;
 import de.hspf.swt.exam.administration.dao.User;
+import de.hspf.swt.exam.util.ViewContextUtil;
+import java.io.IOException;
 import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.TypedQuery;
+import javax.security.enterprise.AuthenticationStatus;
+import static javax.security.enterprise.AuthenticationStatus.NOT_DONE;
+import static javax.security.enterprise.AuthenticationStatus.SEND_CONTINUE;
+import static javax.security.enterprise.AuthenticationStatus.SEND_FAILURE;
+import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
+import javax.security.enterprise.SecurityContext;
+import javax.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
+import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,35 +42,55 @@ public class LoginBean implements Serializable {
     @EJB
     private LoginController loginController;
 
+    @Inject
+    private SecurityContext securityContext;
+
+
     private User user;
     private Student student;
 
     public LoginBean() {
     }
 
-    public String doLogin() {
+    public String doLogin() throws IOException {
         String forward, caption, msg;
         logger.debug("initiate validation");
         user = loginController.loadUser(user.getUserId(), user.getPassword());
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        if ( user == null ) {
-            logger.debug("Could not find user with id. Possibly credentials are wrong.");
-            context.validationFailed();
-            caption = "Validation Error";
-            msg = "No user valid found, error with userId or password";
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, caption, msg));
-            forward = "login.xhtml";
-        } else {
-            caption = "Validation Error";
-            msg = "No user valid found, error with userId or password";
-            context.addMessage(null, new FacesMessage(caption, msg));
-            student = loginController.loadStudent(user.getUserId());
-            forward = "loginsuccessful.xhtml";
-            loggedIn = true;
+       
+        forward = "login.xhtml";
+        switch (continueAuthentication()) {
+            case SEND_CONTINUE:
+                ViewContextUtil.getFacesContext().responseComplete();
+                break;
+            case SEND_FAILURE:
+                logger.debug("Could not find user with id. Possibly credentials are wrong.");
+                ViewContextUtil.getFacesContext().validationFailed();
+                
+                caption = "Validation Error";
+                msg = "No user valid found, error with userId or password";
+                ViewContextUtil.getFacesContext().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, caption, msg));
+                
+                break;
+            case SUCCESS:
+                logger.debug("Login successful, for user: ".concat(user.getUserId()));
+                student = loginController.loadStudent(user.getUserId());
+                ViewContextUtil.getFacesContext().addMessage(null,new FacesMessage(FacesMessage.SEVERITY_INFO, "Login succeed", null));
+                ViewContextUtil.getFacesContext().getExternalContext().redirect(ViewContextUtil.getFacesContext().getExternalContext().getRequestContextPath() + "/app/loginsuccessful.xhtml");
+                loggedIn = true;
+                break;
+            case NOT_DONE:
         }
 
         return forward;
+    }
+
+    private AuthenticationStatus continueAuthentication() {
+        return securityContext.authenticate(
+                (HttpServletRequest) ViewContextUtil.getFacesContext().getExternalContext().getRequest(),
+                (HttpServletResponse) ViewContextUtil.getFacesContext().getExternalContext().getResponse(),
+                AuthenticationParameters.withParams().credential(new UsernamePasswordCredential(user.getUserId(), user.getPassword()))
+        );
     }
 
     /**
@@ -88,7 +116,7 @@ public class LoginBean implements Serializable {
             session.invalidate();
             // this does not invalidate the session but does null out the user principle
             request.logout();
-        } catch ( ServletException e ) {
+        } catch (ServletException e) {
             logger.error("Failed to logout user! " + e.getMessage());
             forward = "/loginerror?faces-redirect=true";
         }
@@ -103,13 +131,13 @@ public class LoginBean implements Serializable {
     }
 
     public User getUser() {
-        if ( user == null ) {
+        if (user == null) {
             user = new User();
         }
         return user;
     }
 
-    public void setUser( User user ) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -117,7 +145,7 @@ public class LoginBean implements Serializable {
         return loggedIn;
     }
 
-    public void setLoggedIn( boolean loggedIn ) {
+    public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
     }
 
@@ -129,8 +157,8 @@ public class LoginBean implements Serializable {
         return student;
     }
 
-    public void setStudent( Student student ) {
+    public void setStudent(Student student) {
         this.student = student;
     }
-    
+
 }

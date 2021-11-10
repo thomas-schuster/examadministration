@@ -54,7 +54,7 @@ public class ApplicationBean implements Serializable {
     private HostUniversityFacade hostUniversityManager;
     @EJB
     private ApplicationFacade applicationManager;
-    
+
     private List<HostUniversity> hosts;
     private HostUniversity host;
 
@@ -63,7 +63,6 @@ public class ApplicationBean implements Serializable {
     private Date endDate;
     private List<Application> applicationItems;
     private String level;
-    
 
     public ApplicationBean() {
     }
@@ -84,19 +83,18 @@ public class ApplicationBean implements Serializable {
         newApp.setEnglishLanguageSkillLevel(level);
         logger.debug("host is: " + host.getUniversityName());
         newApp.createApplicationItem(host, 1);
-        
+
         logger.info("saving application");
         applicationManager.create(newApp);
-        
+
         notApprovedApplicationItems = loginBean.getStudent().getNotApprovedApplicationItems();
-        
-        
+
         applicationManager.findAll().forEach((Application app) -> {
             app.getApplicationItems().forEach((item) -> {
                 logger.debug("university in application: " + item.getHostUniversity().getUniversityName());
             });
         });
-        
+
         resetApplicationvalues();
     }
 
@@ -104,9 +102,9 @@ public class ApplicationBean implements Serializable {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         int month = localDate.getMonthValue();
         int year = localDate.getYear();
-        if (month < 4 | month >9) {
+        if (month < 4 | month > 9) {
             int nextYear = year + 1;
-            return "WS " + year + "/" + nextYear; 
+            return "WS " + year + "/" + nextYear;
         } else {
             return "SS " + year;
         }
@@ -116,22 +114,24 @@ public class ApplicationBean implements Serializable {
 
     }
 
-    public String navigate2ApprovedApplications(boolean isAll) {
-        if (isAll) {
-            return "selectAllApplicationItems.xhtml";
-        }
-        return navigate2ApprovedApplications();
+    public String navigate2Applications() {
+        return "selectApplicationItems.xhtml";
     }
-    
+
     public String navigate2ApprovedApplications() {
         if (approvedApplicationItems.isEmpty()) {
+            logger.debug("could not find approved applications");
             return "noApprovedApplicationFound.xhtml";
         }
-        return "selectApplicationItem.xhtml";
+        logger.debug("found approved applications, redirecting");
+        return "selectApprovedlApplicationItems.xhtml";
     }
 
     public String navigate2LearningAgreement(ApplicationItem applicationItem) {
         logger.info("navigate to learning agreement");
+        if (!conversation.isTransient()) {
+            conversation.end();
+        }
         conversation.begin();
         learningAgreementBean.get().initObjects(applicationItem);
         return "learningAgreementListView.xhtml";
@@ -160,7 +160,7 @@ public class ApplicationBean implements Serializable {
     public void setNotApprovedApplicationItems(ArrayList<ApplicationItem> notApprovedApplicationItems) {
         this.notApprovedApplicationItems = notApprovedApplicationItems;
     }
-    
+
     public HostUniversity getHost() {
         return host;
     }
@@ -229,5 +229,5 @@ public class ApplicationBean implements Serializable {
     public void setLevel(String level) {
         this.level = level;
     }
-   
+
 }

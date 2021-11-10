@@ -39,7 +39,7 @@ public class LearningAgreementItem implements Serializable, Comparable<LearningA
     @Id
     private String id;
 
-    private int posNo;
+    private int posNumber;
 
     public LearningAgreementItem() {
         id = UUID.randomUUID().toString();
@@ -80,7 +80,7 @@ public class LearningAgreementItem implements Serializable, Comparable<LearningA
 
     @Override
     public int compareTo( LearningAgreementItem learningAgreementItem ) {
-        return new Integer(this.posNo).compareTo(learningAgreementItem.getPosNo());
+        return Integer.valueOf(this.posNumber).compareTo(learningAgreementItem.getPosNumber());
     }
 
     public List<HomeCourse> getHomeCourses() {
@@ -107,12 +107,12 @@ public class LearningAgreementItem implements Serializable, Comparable<LearningA
         this.id = id;
     }
 
-    public int getPosNo() {
-        return posNo;
+    public int getPosNumber() {
+        return posNumber;
     }
 
-    public void setPosNo( int posNo ) {
-        this.posNo = posNo;
+    public void setPosNumber( int posNo ) {
+        this.posNumber = posNo;
     }
 
 }
