@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/default.xhtml">
+    <ui:define name="content">
+        <h1>Please select the desired application item for student #{learningAgreementBean.student.lastName}</h1>
+        <br/>
+        <h:form id="selectApprovedApplicationForm">
+            <h:dataTable value="#{learningAgreementBean.applicationItems}" 
+                         var="ai"
+                         styleClass="order-table"
+                         headerClass="order-table-header"
+                         rowClasses="order-table-odd-row,order-table-even-row">
+                <h:column>
+                    <!-- column header -->
+                    <f:facet name="header">Host University</f:facet>
+                    <!-- row record -->
+                    #{ai.hostUniversityName}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Start Semester</f:facet>
+                        #{ai.startSemester}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Last Semester</f:facet>
+                        #{ai.lastSemester}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Select</f:facet>
+                    <h:commandLink action="#{learningAgreementBean.doCreateLearningAgreement(ai)}"
+                                   title="if a learning agreement exists already you can edit it, otherwise you can create a new one"
+                                   value="Edit or create learning agreement"/>                        
+                </h:column>
+            </h:dataTable>
+        </h:form>        
+    </ui:define>   
+</ui:composition> 
+

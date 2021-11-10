@@ -1,17 +1,13 @@
 package de.hspf.swt.exam.administration.dao;
 
-import de.hspf.swt.exam.administration.appcontroller.ApplicationFacade;
-import de.hspf.swt.exam.administration.dao.Application;
+import de.hspf.swt.exam.administration.dao.facade.ApplicationFacade;
 import java.util.ArrayList;
 import javax.persistence.EntityManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -40,8 +36,8 @@ public class ApplicationTest {
 
         Country usa = new Country("USA");
         Country slovenia = new Country("Slovenia");
-        HostUniverstiy wyoming = new HostUniverstiy(usa, "University of Wyoming", "Laramie");
-        HostUniverstiy ljubljana = new HostUniverstiy(slovenia, "University of Ljubljana", "LJubljana");
+        HostUniversity wyoming = new HostUniversity("University of Wyoming", "Laramie", usa);
+        HostUniversity ljubljana = new HostUniversity("University of Ljubljana", "LJubljana", slovenia);
 
         application = new Application("WS 2019/2020", "WS 2019/2020", "C1", "Strengthen intercultural skills", null);
         application.createApplicationItem(wyoming, 1);

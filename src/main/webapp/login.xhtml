@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/default.xhtml">
+    <ui:define name="content">
+        <h:form id="loginForm">
+            <h:panelGrid  columns="2" headerClass="panelHeading">
+                <f:facet name="header">
+                    <h:outputText value="User Login " />
+                </f:facet>                
+                <h:outputLabel for="UserId" value="UserId/E-Mail"/>
+                <h:panelGroup>
+                    <h:inputText id="UserId" required="true"
+                                 value="#{loginBean.userData.userId}"
+                                 requiredMessage=" - Please enter userId"/>
+                    <h:message for="UserId" errorClass="error"/>
+                </h:panelGroup>
+                <h:outputLabel for="password" value="Password"/>
+                <h:panelGroup>
+                    <h:inputSecret id="password" required="true"
+                                   value="#{loginBean.userData.password}"
+                                   requiredMessage=" - Please enter password">
+                    </h:inputSecret>
+                    <h:message for="password" errorClass="error"/>
+                </h:panelGroup>
+            </h:panelGrid>
+            <h:panelGroup>
+                <h:commandButton value="Login" id="loginButton" title="Login to System" 
+                                 action="#{loginBean.doLogin()}"/>   
+                <h:message for="loginButton" errorClass="error"/>
+            </h:panelGroup>
+        </h:form>
+    </ui:define>   
+</ui:composition>
+
+

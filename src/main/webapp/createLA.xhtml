@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/default.xhtml">
+    <ui:define name="content">
+        <h:form id="createLA">
+            <h:panelGrid  columns="4" styleClass="borderTable" headerClass="panelHeading" style="width: 100%">
+                <f:facet name="header">
+                    <h:outputText value="Learning Agreement" />
+                </f:facet>                
+                <h:outputLabel for="studentId" value="Student ID" styleClass="standard_bold"/>
+                <h:outputText id="studentId" 
+                              value="#{createLearningAgreementBean.student.studentID}"/>
+                <h:outputLabel for="studentName" value="Name of Student" styleClass="standard_bold"/>
+                <h:outputText id="studentName" 
+                              value="#{createLearningAgreementBean.student.lastName}"/>
+                <h:outputLabel for="studyProgram" value="Study Program" styleClass="standard_bold"/>
+                <h:outputText id="studyProgram" 
+                              value="#{createLearningAgreementBean.student.studyProgram.programTitle}"/>
+                <h:outputLabel for="studyPeriod" value="Study Period" styleClass="standard_bold"/>
+                <h:outputText id="studyPeriod" 
+                              value="from 
+                              #{createLearningAgreementBean.applicationItem.application.startingSemester} to 
+                              #{createLearningAgreementBean.applicationItem.application.lastSemester}"/> 
+                <h:outputLabel for="hostUniv" value="Host University" styleClass="standard_bold"/>
+                <h:outputText id="hostUniv" 
+                              value="#{createLearningAgreementBean.applicationItem.hostUniversityName}"/>
+                <h:outputLabel for="hostCountry" value="Country" styleClass="standard_bold"/>
+                <h:outputText id="hostCountry" 
+                              value="#{createLearningAgreementBean.applicationItem.hostUniversity.country.countryName}"/>
+            </h:panelGrid>
+            <br/>
+            <h:outputLabel value="Learning Agreement Item No 
+                           #{createLearningAgreementBean.
+                             currentLearningAgreementItem.posNo}" styleClass="standard_bold"/>
+            <h:panelGrid  columns="3" styleClass="borderTable" headerClass="panelHeading" style="width: 100%">
+                <h:outputLabel for="homeCourse" value="Home Course" styleClass="standard_bold"/>
+                <h:selectOneMenu id="homeCourse"   styleClass="mymenu"
+                                 value="#{createLearningAgreementBean.selectedHomeCourse}"
+                                 converter="#{courseConverter}">
+                    <f:selectItems value="#{createLearningAgreementBean.selectableHomeCourses}"
+                                   var="home" itemLabel="#{home.courseTitle}" itemValue="#{home}"          />
+                </h:selectOneMenu>
+                <h:panelGroup>
+                    <h:commandButton id="addHomeCourseButton" value="Add Home Course" 
+                                     action="#{createLearningAgreementBean.doAddHomeCourse()}"
+                                     style="width: 120px" title="adds selected course to learning agreement item"
+                                     rendered="#{createLearningAgreementBean.renderAddHomeCourseButton}"/>  
+                </h:panelGroup>
+                <h:outputLabel for="hostCourse" value="Host Course" styleClass="standard_bold"/>
+                <h:selectOneMenu id="hostCourse"  styleClass="mymenu" 
+                                 value="#{createLearningAgreementBean.selectedHostCourse}"
+                                 converter="#{courseConverter}">
+                    <f:selectItems  value="#{createLearningAgreementBean.selectableHostCourses}"
+                                    var="host" itemLabel="#{host.courseTitle}" itemValue="#{host}"/>
+                </h:selectOneMenu>  
+                <h:panelGroup>
+                    <h:commandButton id="addHostCourseButton" value="Add Host Course" 
+                                     action="#{createLearningAgreementBean.doAddHostCourse()}"
+                                     style="width: 120px" title="adds selected course to learning agreement item"
+                                     rendered="#{createLearningAgreementBean.renderAddHostCourseButton}"/>  
+                </h:panelGroup>
+            </h:panelGrid>
+            <h:commandButton id="createNextLAItemButton" value="Create Next Leaning Agreement Item" 
+                             action="#{createLearningAgreementBean.doCreateNextLAItem()}"
+                             rendered="#{createLearningAgreementBean.renderCreateNextLAItem}"
+                             title="Finalizes the current LA-Item and provides a new LA-item"/>  
+        </h:form>
+        <br/>
+        <h:form id="newHostCourse">
+            <h:panelGrid  columns="6" styleClass="borderTable" headerClass="panelHeading" style="width: 100%">
+                <f:facet name="header">
+                    <h:outputText value="Create new Host Course" />
+                </f:facet>                             
+                <h:outputLabel for="courseId" value="Course ID"/>                
+                <h:inputText id="courseId" required="true" 
+                             requiredMessage=" - Please enter Course Id"
+                             title="e.g. Mgmt4240"
+                             value="#{createLearningAgreementBean.courseId}"/>                
+                <h:outputLabel for="courseTitle" value="Course Title"/>                
+                <h:inputText id="courseTitle" required="true" 
+                             requiredMessage=" - Please enter Course Title"
+                             value="#{createLearningAgreementBean.courseTitle}"/>                
+                <h:outputLabel for="credits" value="Credits"/>                
+                <h:inputText id="credits" required="true"
+                             requiredMessage=" - Please enter number of credits"
+                             title="For European universities ECTS, for others the domestic credit value"
+                             value="#{createLearningAgreementBean.ects}"/>                
+            </h:panelGrid>
+            <h:commandButton id="createNewHostCourse" value="Create New Host Course" 
+                             action="#{createLearningAgreementBean.doCreateHostCourse()}"
+                             title="If you miss a course in the host university selection box, you can add an additional one"/>
+            <h:outputText value="      - New Host Course now in select box" 
+                          rendered="#{createLearningAgreementBean.
+                                      renderNewHostCourseCreated}"/><br/>                  
+        </h:form>
+        <br/>
+        <f:view>
+            <h:form id="laItemList">
+                <h:dataTable value=
+                             "#{createLearningAgreementBean.
+                                learningAgreementItems}" var="item"
+                             styleClass="order-table"
+                             headerClass="order-table-header"
+                             rowClasses="order-table-odd-row,order-table-even-row">
+                    <f:facet name="header">
+                        <h:panelGrid  columns="4" border="0" style="width: 100%">
+                            <h:outputLabel style="width: 5%" value=" " />
+                            <h:outputLabel style="width: 45%" value="Home Course" />
+                            <h:outputLabel style="width: 45%" value="Host Course" />
+                            <h:outputLabel style="width: 5%" value=" " />
+                        </h:panelGrid>
+                    </f:facet>
+                    <h:column>
+                        <!-- column header -->
+                        <f:facet name="header">Item No.</f:facet>
+                        <!-- row record -->
+                        #{item.itemNo}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">ID</f:facet>
+                            #{item.homeCourseId}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Title</f:facet>
+                            #{item.homeCourseTitle}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Credits</f:facet>
+                            #{item.homeCourseCredits}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">ID</f:facet>
+                            #{item.hostCourseId}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Title</f:facet>
+                            #{item.hostCourseTitle}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Credits</f:facet>
+                            #{item.hostCourseCredits}
+                    </h:column> 
+                    <h:column>
+                        <f:facet name="header">Action</f:facet>
+                        <h:commandLink action="#{createLearningAgreementBean.doDeleteLearningAgreementItem(item.itemNo)}"
+                                       immediate="true" rendered="#{item.renderedDeleteButton}"
+                                       title="Delete the selected Learning Agreement Item">
+                            <h:outputText value="Delete"/>
+                        </h:commandLink>
+                    </h:column>
+                </h:dataTable>   
+                <h:commandButton id="saveLA" value="Save Learning Agreement" 
+                                 action="#{createLearningAgreementBean.
+                                           doSaveLearningAgreement()}"
+                                 rendered="#{createLearningAgreementBean.
+                                             renderCreateNextLAItem}"
+                                 immediate="true"/> 
+            </h:form>
+            <h:messages styleClass="error"/>
+        </f:view>
+    </ui:define>   
+</ui:composition>
+
+

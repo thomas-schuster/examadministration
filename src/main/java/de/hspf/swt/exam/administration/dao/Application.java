@@ -1,5 +1,6 @@
 package de.hspf.swt.exam.administration.dao;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,9 @@ import javax.persistence.Temporal;
  * @author karl-heinz.rau
  */
 @Entity
-public class Application {
+public class Application implements Serializable {
+
+    private static final long serialVersionUID = -33588374416081141L;
 
     @OneToMany(mappedBy = "application", cascade = {PERSIST, REMOVE})
     private List<ApplicationItem> applicationItems;
@@ -49,7 +52,7 @@ public class Application {
         this.dateOfCreation = new Date();
     }
 
-    public ApplicationItem createApplicationItem(HostUniverstiy hostUniverstiy, int priority) {
+    public ApplicationItem createApplicationItem(HostUniversity hostUniverstiy, int priority) {
         ApplicationItem newApplicationItem = new ApplicationItem(applicationItems.size() + 1, priority, hostUniverstiy, this);
         applicationItems.add(newApplicationItem);
         return newApplicationItem;
