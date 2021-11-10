@@ -1,0 +1,10 @@
+/nbproject/
+/target/
+/logs/*.log
+/.settings/
+/.classpath
+/.project
+/.apt_generated/
+/.apt_generated_tests/
+
+.vscode/
